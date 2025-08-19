@@ -1,9 +1,14 @@
 package cn.jiege.starGraph;
 
+import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.context.properties.ConfigurationProperties;
+import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 
 @SpringBootApplication
+@ConfigurationPropertiesScan
+@MapperScan("cn.jiege.starGraph.**.mapper")
 public class StarGraphApp {
 
     public static void main(String[] args) {

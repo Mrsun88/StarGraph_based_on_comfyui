@@ -39,7 +39,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 .or(c -> c.eq(User::getPassword, userLoginReqDTO.getPassword()))
                 .one();
         // 校验密码
-        if(user == null || !BCrypt.checkpw(user.getPassword(), userLoginReqDTO.getPassword())) {
+        if(user == null || !BCrypt.checkpw(userLoginReqDTO.getPassword(), user.getPassword())) {
             throw new BadRequestException("用户名或密码错误");
         }
         // 生成token, 返回

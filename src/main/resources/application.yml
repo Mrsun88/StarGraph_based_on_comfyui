@@ -8,6 +8,10 @@ spring:
     redis:
       host: 192.168.100.129
       port: 6379
+  freemarker:
+    template-loader-path: classpath:/templates/
+    suffix: .ftl
+    charset: UTF-8
 
 mybatis-plus:
   configuration:
@@ -29,5 +33,9 @@ star-graph:
     connection-pool:
       keep-alive-duration: 5
   ollama:
-    base-url: http://192.168.3.26:11434
-    connect-timeout: 120
+    connection:
+      base-url: http://192.168.3.26:11434
+      connect-timeout: 5
+      read-timeout: 120
+    model: qwen3:8b
+

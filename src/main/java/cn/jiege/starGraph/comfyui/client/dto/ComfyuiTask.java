@@ -4,6 +4,9 @@ import lombok.Data;
 
 import java.util.UUID;
 
+/**
+ * redis 中队列任务
+ */
 @Data
 public class ComfyuiTask {
 
