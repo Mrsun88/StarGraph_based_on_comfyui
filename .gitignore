@@ -37,3 +37,9 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+# 测试
+src/test/
+
+# 前端
+frontEnd/

@@ -19,3 +19,15 @@ mybatis-plus:
 logging:
   level:
     root: info
+
+star-graph:
+  comfyui:
+    base-url-and-port: http://192.168.3.26:8188
+    connection-timeout-seconds: 3
+    read-timeout-seconds: 10
+    retry-on-connection-failure: true
+    connection-pool:
+      keep-alive-duration: 5
+  ollama:
+    base-url: http://192.168.3.26:11434
+    connect-timeout: 120
