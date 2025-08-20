@@ -6,12 +6,15 @@ import cn.jiege.starGraph.comfyui.client.dto.ComfyuiModel;
 import cn.jiege.starGraph.comfyui.client.dto.ComfyuiRequestDto;
 import cn.jiege.starGraph.comfyui.client.dto.ComfyuiTask;
 import cn.jiege.starGraph.core.dto.request.Text2ImageReqDto;
+import cn.jiege.starGraph.core.dto.respone.Text2ImageResDto;
 import cn.jiege.starGraph.core.service.FreemarkerService;
 import cn.jiege.starGraph.core.service.OllamaService;
+import cn.jiege.starGraph.core.service.RedisService;
 import cn.jiege.starGraph.core.service.Text2ImageService;
 import cn.jiege.starGraph.core.utils.UserUtils;
 import com.alibaba.fastjson2.JSON;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
 
@@ -23,13 +26,14 @@ public class Text2ImageServiceImpl implements Text2ImageService {
 
     private final OllamaService ollamaService;
     private final FreemarkerService freemarkerService;
+    private final RedisService redisService;
 
     /**
      * 将前端传入的参数封装为redis任务对象
      * @param text2ImageReqDto 前端传入的参数
      * @return redis任务对象(包含Comfyui生图的任务对象)
      */
-    public ComfyuiTask text2Image(Text2ImageReqDto text2ImageReqDto) throws Exception {
+    public ComfyuiTask getComfyuiTask(Text2ImageReqDto text2ImageReqDto) throws Exception {
         // 1. 将text2ImageReqDto转换为ComfyuiModel
         ComfyuiModel model = BeanUtil.toBean(text2ImageReqDto, ComfyuiModel.class);
         model.setWidth(text2ImageReqDto.width());
@@ -60,4 +64,24 @@ public class Text2ImageServiceImpl implements Text2ImageService {
         return new ComfyuiTask(text2ImageReqDto.getClientId(), comfyuiRequestDto);
     }
 
+    /**
+     * 文生图方法
+     * @param text2ImageReqDto
+     * @return
+     */
+    @Override
+    public Text2ImageResDto text2Image(Text2ImageReqDto text2ImageReqDto) throws Exception {
+        // 1. 获取ComfyuiTask对象
+        ComfyuiTask comfyuiTask = getComfyuiTask(text2ImageReqDto);
+        // 封装用户id
+        comfyuiTask.setUserId(UserUtils.getUser().getId());
+
+        // 2. 添加数据到redis
+        comfyuiTask = redisService.addQueueTask(comfyuiTask);
+        // 3. 返回结果
+        Text2ImageResDto resDto = new Text2ImageResDto();
+        resDto.setPid(comfyuiTask.getId());
+        resDto.setQueueIndex(comfyuiTask.getIndex());
+        return resDto;
+    }
 }
